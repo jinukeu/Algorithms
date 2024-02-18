@@ -1,41 +1,43 @@
 class Solution {
-    var zero = 0
-var one = 0
+    var zero: Int = 0
+var one: Int = 0
 
 fun solution(arr: Array<IntArray>): IntArray {
     var answer: IntArray = intArrayOf()
-    qud(arr, 0, arr[0].size, 0, arr.size)
+    qud(0, arr.size, 0, arr.size, arr)
     return intArrayOf(zero, one)
 }
 
-fun qud(arr:Array<IntArray>, startX: Int, endX: Int, startY: Int, endY: Int) {
-    if(endX - startX == 1) {
-        if(arr[startY][startX] == 0) zero += 1 else one += 1
+fun qud(startI: Int, endI: Int, startJ: Int, endJ: Int, arr: Array<IntArray>) {
+    if(endI - startI == 1) {
+        if (arr[startI][startJ] == 1) one += 1
+        else zero += 1
         return
     }
 
-    var tzero = 0
-    var tone = 0
-
-   for(x in startX until endX)
-       for(y in startY until endY) {
-           if(arr[y][x] == 0) tzero += 1 else tone += 1
-       }
-
-    if(tzero == (endX - startX) * (endY - startY)) {
-        zero += 1
-        return
+    var tempZero = 0
+    for (i in startI until endI) {
+        for (j in startJ until endJ) {
+            if(arr[i][j] == 0) tempZero += 1
+        }
     }
 
-    if(tone == (endX - startX) * (endY - startY)) {
+    // 1로 압축 가능함
+    if (tempZero == 0) {
         one += 1
         return
     }
 
-    for(nx in startX until endX step (endX - startX) / 2) {
-        for(ny in startY until endY step (endX - startX) / 2) {
-            qud(arr, nx, nx + (endX - startX) / 2, ny, ny + (endY - startY) / 2)
-        }
+    if (tempZero == (endI - startI) * (endI - startI)) {
+        zero += 1
+        return
     }
+
+    val d = (endI - startI) / 2
+    qud(startI, startI + d, startJ, startJ + d, arr)
+    qud(startI + d, endI, startJ, startJ + d, arr)
+    qud(startI, startI + d, startJ + d, endJ, arr)
+    qud(startI + d, endI, startJ + d, endJ, arr)
 }
+
 }
