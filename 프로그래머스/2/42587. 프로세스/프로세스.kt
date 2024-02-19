@@ -1,30 +1,54 @@
-import java.util.*
+import kotlin.collections.ArrayDeque
 
 class Solution {
     fun solution(priorities: IntArray, location: Int): Int {
     var answer = 0
-    // 1. 남은 큐 중에서 제일 큰 놈을 찾는다.
-    // 2. 제일 큰 놈이 나오면 remove 아니면 add한다.
-    // 3. remove 되었을 때 원하는 location에 있으면
 
-    val loq: Queue<Int> = LinkedList()
-    loq.addAll(List(priorities.size) { it })
+    val que = ArrayDeque<Int>()
+    que.addAll(priorities.toList())
 
-    val prq: Queue<Int> = LinkedList()
-    prq.addAll(priorities.toList())
+    var loc = location
 
     while (true) {
-        val m = prq.maxOf { it }
-        val n = prq.remove()
-        val l = loq.remove()
-
-        if(m != n) {
-            prq.add(n)
-            loq.add(l)
-        } else {
-            answer += 1
-            if (l == location) return answer
+        val now = que.removeFirst()
+        loc -= 1
+        
+        if (que.isEmpty()) {
+            return ++answer
         }
+
+        // 원하는 값인 경우
+        if(loc == -1) {
+            // 원하는 값이고 사용 가능한 경우
+            if (now >= que.maxOf { it }) {
+                answer += 1
+                return answer
+            }
+
+            // 원하는 값이 나왔는데, 사용할 수 없는 경우
+            if (now < que.maxOf { it }) {
+                que.add(now)
+                loc = que.size - 1
+                continue
+            }
+        }
+        // 원하는 값이 아닌 경우
+        else {
+            // 사용 가능한 경우
+            if (now >= que.maxOf { it }) {
+                answer += 1
+                continue
+            }
+
+            // 사용할 수 없는 경우
+            if (now < que.maxOf { it }) {
+                que.add(now)
+                continue
+            }
+        }
+
     }
+
+    return answer
 }
 }
