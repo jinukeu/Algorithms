@@ -1,30 +1,30 @@
-import java.util.*
-
 class Solution {
-    fun solution(begin: String, target: String, words: Array<String>): Int {
-    var answer = 0
+fun solution(begin: String, target: String, words: Array<String>): Int {
+    val word = words.toMutableSet()
+    val que = ArrayDeque<Pair<String, Int>>()
+    que.add(Pair(begin, 1))
 
-    val q: Queue<Pair<String, Int>> = LinkedList()
-    val visited = MutableList(words.size) { false }
+    while (que.isNotEmpty()) {
+        val (n, cnt) = que.removeFirst()
+        word.remove(n)
+        if (n == target) return cnt - 1
 
-    q.add(Pair(begin, 0))
-
-    while (q.isNotEmpty()) {
-        val (cur, cnt) = q.remove()
-        if (cur == target) return cnt
-
-        words.forEachIndexed { i, word ->
-            if(visited[i].not()) {
-                var diff = 0
-                word.forEachIndexed { index, c -> if (c != cur[index]) diff+=1 }
-                if(diff == 1) {
-                    q.add(Pair(word, cnt + 1))
-                    visited[i] = true
-                }
+        word.toList().forEach { w ->
+            if(canChange(n, w)) {
+                que.add(Pair(w, cnt + 1))
             }
         }
     }
 
     return 0
+}
+
+fun canChange(n: String, w: String): Boolean {
+    var strangeCnt = 0
+    for (i in n.indices) {
+        if (n[i] != w[i]) strangeCnt += 1
+    }
+    
+    return strangeCnt == 1
 }
 }
